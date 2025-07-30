@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔋 Архитектура системы ЭЗС</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <!-- Навигация с тегами -->
+    <nav class="main-nav">
+        <h1>🔋 Архитектура системы ЭЗС</h1>
+        <div class="nav-tabs">
+            <button class="tab-btn active" data-level="overview" data-tags="business,management">
+                👔 Бизнес-обзор
+            </button>
+            <button class="tab-btn" data-level="technical" data-tags="frontend,backend,api">
+                ⚙️ Техническая архитектура
+            </button>
+            <button class="tab-btn" data-level="database" data-tags="database,storage,cache">
+                🗄️ База данных
+            </button>
+            <button class="tab-btn" data-level="user-journey" data-tags="ux,flows,screens">
+                🎨 User Journey
+            </button>
+        </div>
+        
+        <!-- Поиск -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 Поиск по диаграммам..." />
+            <div id="searchResults"></div>
+        </div>
+    </nav>
+
+    <!-- Контент -->
+    <main class="content">
+        <div id="diagram-container"></div>
+        
+        <!-- Теги и метаданные -->
+        <div class="diagram-meta">
+            <div class="tags-container">
+                <span class="meta-label">Теги:</span>
+                <div id="current-tags"></div>
+            </div>
+            <div class="screenshots-container">
+                <span class="meta-label">Скриншоты:</span>
+                <div id="related-screenshots"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="assets/script.js"></script>
+</body>
+</html>
