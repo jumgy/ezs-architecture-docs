@@ -301,17 +301,16 @@ const searchData = [
 let currentLevel = 'overview';
 
 // DOM элементы
-const diagramContainer = document.getElementById('diagramContainer');
+iner = document.getElementById('diagram-container');
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
-const currentTags = document.getElementById('currentTags');
-const relatedScreenshots = document.getElementById('relatedScreenshots');
-const lastUpdated = document.getElementById('lastUpdated');
+const currentTags = document.getElementById('current-tags');
+const relatedScreenshots = document.getElementById('related-screenshots');
 
 // Обработчики событий
 document.addEventListener('DOMContentLoaded', function() {
     // Установка даты обновления
-    lastUpdated.textContent = new Date().toLocaleDateString('ru-RU');
+    //lastUpdated.textContent = new Date().toLocaleDateString('ru-RU');
     
     // Обработчики для кнопок табов
     document.querySelectorAll('.tab-btn').forEach(btn => {
