@@ -241,4 +241,231 @@ erDiagram
     USERS ||--o{ FAVORITES : "добавляет_в_избранное"
     STATIONS ||--o{ FAVORITES : "находится_в_избранном"
     CHARGING_SESSIONS ||--|| PAYMENTS : "оплачивается"
-    USERS
+    USERS ||--o{ PAYMENTS : "производит_оплату"
+        `
+    },
+    
+    "user-journey": {
+        title: "User Journey - Путь пользователя",
+        tags: ["ux", "flows", "user"],
+        screenshots: ["user-flow.png", "wireframes.png"],
+        mermaid: `
+journey
+    title Путь пользователя: Поиск и зарядка ЭЗС
+    
+    section 🔍 Поиск станции
+        Открыть приложение: 5: Пользователь
+        Найти станцию на карте: 4: Пользователь
+        Применить фильтры: 3: Пользователь
+        Проверить доступность: 3: Пользователь, Система
+        Построить маршрут: 4: Пользователь, Yandex Maps
+        Выбрать станцию: 5: Пользователь
+        
+    section 🚗 Поездка к станции
+        Следовать по маршруту: 4: Пользователь, Навигация
+        Получить уведомление о прибытии: 5: Система
+        Найти нужный разъем: 3: Пользователь
+        
+    section ⚡ Процесс зарядки
+        Сканировать QR код: 4: Пользователь
+        Подтвердить тип коннектора: 4: Пользователь, Система
+        Подключить кабель: 3: Пользователь
+        Начать зарядку: 5: Пользователь, Станция
+        Мониторинг процесса: 4: Пользователь, Система
+        Получать обновления статуса: 5: Система
+        
+    section 💳 Завершение и оплата
+        Завершить зарядку: 5: Пользователь, Станция
+        Отключить кабель: 4: Пользователь
+        Подтвердить сессию: 4: Система
+        Произвести оплату: 3: Пользователь, Платежная система
+        Получить чек: 5: Пользователь, Система
+        Оценить станцию: 3: Пользователь
+        `
+    }
+};
+
+// Поисковые данные для автодополнения
+const searchData = [
+    { title: "API Gateway", description: "Единая точка входа для всех API", section: "technical", tags: ["backend", "api"] },
+    { title: "Yandex Maps", description: "Интерактивная карта и навигация", section: "technical", tags: ["frontend", "maps"] },
+    { title: "QR Scanner", description: "Сканирование QR кодов станций", section: "technical", tags: ["frontend", "camera"] },
+    { title: "Station Data Manager", description: "Управление данными станций", section: "technical", tags: ["frontend", "data"] },
+    { title: "База данных пользователей", description: "Таблица USERS", section: "database", tags: ["database", "users"] },
+    { title: "Сессии зарядки", description: "Таблица CHARGING_SESSIONS", section: "database", tags: ["database", "sessions"] },
+    { title: "User Journey", description: "Путь пользователя от поиска до зарядки", section: "user-journey", tags: ["ux", "flows"] },
+    { title: "Мобильное приложение", description: "Flutter приложение для ЭЗС", section: "overview", tags: ["business", "mobile"] }
+];
+
+// Текущий активный раздел
+let currentLevel = 'overview';
+
+// DOM элементы
+const diagramContainer = document.getElementById('diagramContainer');
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+const currentTags = document.getElementById('currentTags');
+const relatedScreenshots = document.getElementById('relatedScreenshots');
+const lastUpdated = document.getElementById('lastUpdated');
+
+// Обработчики событий
+document.addEventListener('DOMContentLoaded', function() {
+    // Установка даты обновления
+    lastUpdated.textContent = new Date().toLocaleDateString('ru-RU');
+    
+    // Обработчики для кнопок табов
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const level = this.getAttribute('data-level');
+            switchToLevel(level);
+            
+            // Обновляем активные кнопки
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    
+    // Поиск
+    searchInput.addEventListener('input', handleSearch);
+    searchInput.addEventListener('focus', () => {
+        if (searchInput.value.length > 0) {
+            searchResults.style.display = 'block';
+        }
+    });
+    
+    // Скрыть результаты поиска при клике вне
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+    
+    // Загрузить первую диаграмму
+    switchToLevel('overview');
+});
+
+// Переключение между уровнями
+function switchToLevel(level) {
+    currentLevel = level;
+    const data = diagramData[level];
+    
+    if (!data) {
+        console.error('Diagram data not found for level:', level);
+        return;
+    }
+    
+    // Показать загрузку
+    diagramContainer.innerHTML = '<div class="loading">Загрузка диаграммы...</div>';
+    
+    // Загрузить диаграмму
+    setTimeout(() => {
+        renderDiagram(data);
+        updateTags(data.tags);
+        updateScreenshots(data.screenshots);
+    }, 500);
+}
+
+// Рендеринг диаграммы
+async function renderDiagram(data) {
+    try {
+        diagramContainer.innerHTML = `
+            <h2 class="diagram-title">${data.title}</h2>
+            <div class="mermaid" id="mermaid-diagram">${data.mermaid}</div>
+        `;
+        
+        const mermaidElement = document.getElementById('mermaid-diagram');
+        
+        // Очистить и перерендерить
+        mermaidElement.removeAttribute('data-processed');
+        await mermaid.init(undefined, mermaidElement);
+        
+        // Добавить анимацию появления
+        diagramContainer.classList.add('fade-in');
+        setTimeout(() => diagramContainer.classList.remove('fade-in'), 300);
+        
+    } catch (error) {
+        console.error('Error rendering diagram:', error);
+        diagramContainer.innerHTML = `
+            <div style="text-align: center; color: #e53e3e; padding: 40px;">
+                <h3>❌ Ошибка загрузки диаграммы</h3>
+                <p>Попробуйте обновить страницу</p>
+            </div>
+        `;
+    }
+}
+
+// Обновление тегов
+function updateTags(tags) {
+    currentTags.innerHTML = '';
+    tags.forEach(tag => {
+        const tagElement = document.createElement('span');
+        tagElement.className = `tag ${tag}`;
+        tagElement.textContent = tag;
+        currentTags.appendChild(tagElement);
+    });
+}
+
+// Обновление скриншотов
+function updateScreenshots(screenshots) {
+    relatedScreenshots.innerHTML = '';
+    screenshots.forEach(screenshot => {
+        const imgElement = document.createElement('div');
+        imgElement.className = 'screenshot-thumb';
+        imgElement.textContent = screenshot.replace('.png', '');
+        imgElement.title = `Скриншот: ${screenshot}`;
+        relatedScreenshots.appendChild(imgElement);
+    });
+}
+
+// Обработка поиска
+function handleSearch(e) {
+    const query = e.target.value.toLowerCase().trim();
+    
+    if (query.length < 2) {
+        searchResults.style.display = 'none';
+        return;
+    }
+    
+    const results = searchData.filter(item => 
+        item.title.toLowerCase().includes(query) ||
+        item.description.toLowerCase().includes(query) ||
+        item.tags.some(tag => tag.toLowerCase().includes(query))
+    );
+    
+    displaySearchResults(results);
+}
+
+// Отображение результатов поиска
+function displaySearchResults(results) {
+    if (results.length === 0) {
+        searchResults.innerHTML = '<div class="search-result">Ничего не найдено</div>';
+        searchResults.style.display = 'block';
+        return;
+    }
+    
+    searchResults.innerHTML = results.map(result => `
+        <div class="search-result" onclick="selectSearchResult('${result.section}')">
+            <div class="search-result-title">${result.title}</div>
+            <div class="search-result-desc">${result.description}</div>
+        </div>
+    `).join('');
+    
+    searchResults.style.display = 'block';
+}
+
+// Выбор результата поиска
+function selectSearchResult(section) {
+    searchResults.style.display = 'none';
+    searchInput.value = '';
+    
+    // Переключиться на нужную диаграмму
+    switchToLevel(section);
+    
+    // Обновить активную кнопку
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-level') === section) {
+            btn.classList.add('active');
+        }
+    });
+}
