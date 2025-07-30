@@ -1,0 +1,6 @@
+title: "PUNKT-E Architecture"
+description: "Interactive system architecture documentation"
+markdown: kramdown
+highlighter: rouge
+plugins:
+  - jekyll-optional-front-matter
