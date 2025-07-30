@@ -310,7 +310,6 @@ const relatedScreenshots = document.getElementById('related-screenshots');
 // Обработчики событий
 document.addEventListener('DOMContentLoaded', function() {
     // Установка даты обновления
-    //lastUpdated.textContent = new Date().toLocaleDateString('ru-RU');
     
     // Обработчики для кнопок табов
     document.querySelectorAll('.tab-btn').forEach(btn => {
