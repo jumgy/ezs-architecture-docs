@@ -1,6 +1,4 @@
-## **2. diagrams/technical.md** (Ваша диаграмма с улучшениями)
 
-```markdown
 ---
 title: "Техническая архитектура системы"
 tags: ["frontend", "backend", "technical", "api"]
